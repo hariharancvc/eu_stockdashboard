@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU Stocklist</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.5}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:200px;background:#161b22;border-right:1px solid #30363d;padding:16px;overflow-y:auto}
+.sidebar h2{font-size:14px;color:#f0f6fc;margin-bottom:12px}
+.sidebar a{display:block;padding:6px 0;color:#8b949e;text-decoration:none;font-size:12px}
+.sidebar a:hover{color:#58a6ff}
+.main{margin-left:200px;padding:24px;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid #30363d}
+header h1{font-size:18px;color:#f0f6fc}
+.refresh-btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer}
+.refresh-btn:hover{background:#2ea043}
+.refresh-btn:disabled{background:#30363d;cursor:not-allowed}
+details{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;margin-bottom:16px}
+details>summary{cursor:pointer;font-size:13px;color:#f0f6fc;display:flex;align-items:center;gap:8px}
+details[open]{border-color:#58a6ff}
+.card{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;margin-top:8px;font-size:12px}
+.card-row{display:flex;justify-content:space-between;margin:3px 0}
+.card-label{color:#8b949e}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px}
+.buy{background:#1a4f2e;color:#56d364;border:1px solid #56d364}
+.hold{background:#1a3a1a;color:#e3b341;border:1px solid #e3b341}
+.sell{background:#4f1a1a;color:#ff7b72;border:1px solid #ff7b72}
+.up{color:#3fb950}.down{color:#f85149}
+.mobile-nav{display:none;position:sticky;top:0;background:#161b22;border-bottom:1px solid #30363d;padding:8px;z-index:10}
+.mobile-nav button{background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;padding:6px 10px;font-size:11px;margin:2px}
+.loader{text-align:center;padding:40px;color:#8b949e}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.mobile-nav{display:flex;flex-wrap:wrap;gap:4px}}
+</style>
+</head>
+<body>
+<div class="mobile-nav">
+<button onclick="jumpTo('nvidia')">NVIDIA</button>
+<button onclick="jumpTo('medical')">Medical</button>
+<button onclick="jumpTo('robotics')">Robotics</button>
+<button onclick="jumpTo('transport_air')">Air</button>
+<button onclick="jumpTo('transport_land')">Land</button>
+<button onclick="jumpTo('transport_water')">Water</button>
+<button onclick="jumpTo('transport_space')">Space</button>
+</div>
+<div class="sidebar">
+<h2>EU Stocklist</h2>
+<a href="#nvidia">NVIDIA Ecosystem</a>
+<a href="#medical">Medical AI</a>
+<a href="#robotics">Robotics AI</a>
+<a href="#transport_air">Transport - Air</a>
+<a href="#transport_land">Transport - Land</a>
+<a href="#transport_water">Transport - Water</a>
+<a href="#transport_space">Transport - Space</a>
+</div>
+<div class="main">
+<header><h1>EU Stocklist</h1><button class="refresh-btn" id="refreshBtn">Reload latest JSON</button></header>
+<div id="lastUpdated" style="font-size:11px;color:#8b949e;margin-bottom:16px"></div>
+<div id="loader" class="loader">Loading quotes...</div>
+<div id="content"></div>
+</div>
+<script>
+const COL_ORDER=['nvidia','medical','robotics','transport_air','transport_land','transport_water','transport_space'];
+const COL_NAME={'nvidia':'NVIDIA Ecosystem','medical':'Medical AI','robotics':'Robotics AI','transport_air':'Transport - Air','transport_land':'Transport - Land','transport_water':'Transport - Water','transport_space':'Transport - Space'};
+function s(n){const b=new Blob([n||""],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="eu_symbol.json";a.click()}
+function dl(f){fetch("./data/eu_quotes.json?_="+Date.now()).then(r=>r.json()).then(d=>render(d)).catch(e=>{document.getElementById("loader").innerHTML="<p style='color:#f85149'>Failed to load data. Make sure eu_quotes.json exists after first GitHub Action run.</p>"});}
+function render(d){const last=d.updatedAt?new Date(d.updatedAt*1000).toLocaleString():"Unknown";const src=d.source||d.sourceName||"Unknown";document.getElementById("lastUpdated").textContent="Last updated: "+last+" | Source: "+src;document.getElementById("loader").style.display="none";const colData={};COL_ORDER.forEach(c=>{colData[c]=[]});(d.items||[]).forEach(it=>{const col=it.column;if(!colData[col])colData[col]=[];colData[col].push(it)});COL_ORDER.forEach(col=>{const items=colData[col]||[];if(!items.length)return;const sec=document.createElement("div");sec.id=col;sec.innerHTML="<h3 style='margin:24px 0 12px;font-size:15px;color:#58a6ff'>"+COL_NAME[col]+"</h3>";items.forEach(it=>{const sClass=(it.signal||"Hold").toLowerCase();const pct=it.change!==undefined?(it.change>=0?"up":"down"):"";const pctText=it.change!==undefined?((it.change>=0?"+":"")+it.change.toFixed(2)):"-";sec.innerHTML+=('<details><summary><span style="font-weight:bold">'+it.company+'</span> <span style="color:#8b949e">('+it.ticker+' '+it.symbol+')</span> <span class="badge '+sClass+'">'+it.signal+'</span></summary><div class="card"><div class="card-row"><span class="card-label">Price</span><span class="'+pct+'"><strong>'+(it.currentPrice!==null?(it.currentPrice.toFixed(2)):"—")+'</strong></span></div><div class="card-row"><span class="card-label">Change</span><span class="'+pct+'">'+pctText+'</span></div><div class="card-row"><span class="card-label">Signal</span><span class="badge '+sClass+'">'+(it.signal||"—")+'</span></div><div class="card-row"><span class="card-label">Liquidity</span><span>'+(it.liquid!==undefined?(it.liquid?"Yes":"No"):"—")+'</span></div><div class="card-row"><span class="card-label">Catalyst</span><span>'+(it.catalyst!==undefined?(it.catalyst?"Yes":"No"):"—")+'</span></div><div class="card-row"><span class="card-label">Breakout</span><span>'+(it.breakout!==undefined?(it.breakout?"Yes":"No"):"—")+'</span></div><div class="card-row"><span class="card-label">2x Volume</span><span>'+(it.volumeSpike2x!==undefined?(it.volumeSpike2x?"Yes":"No"):"—")+'</span></div>'+((it.catalystHeadline)?('<div class="card-row" style="grid-template-columns:auto 1fr"><span class="card-label">News</span><span style="color:#8b949e;font-size:11px">'+it.catalystHeadline+'</span></div>'):"")+'</div></details>');});document.getElementById("content").appendChild(sec);});}
+function jumpTo(id){document.getElementById(id).scrollIntoView({behavior:"smooth"});}
+document.getElementById("refreshBtn").onclick=dl;dl();
+</script>
+</body>
+</html>
