@@ -1,6 +1,223 @@
 {
-  "updatedAt": null,
-  "source": "alpha_vantage_pending",
-  "sourceName": "Alpha Vantage (pending first run)",
-  "items": []
+  "updatedAt": 1778618962,
+  "source": "alpha_vantage",
+  "settings": {
+    "liquidityThreshold": 10000000,
+    "breakoutWindow": 20,
+    "newsLookbackDays": 7,
+    "volumeSpikeMultiplier": 2.0
+  },
+  "items": [
+    {
+      "company": "Siemens AG",
+      "ticker": "SIE",
+      "symbol": "SIE.DEX",
+      "column": "nvidia",
+      "currentPrice": 268.65,
+      "change": 3.6999999999999886,
+      "high": 268.85,
+      "low": 263.65,
+      "open": 265.0,
+      "volume": 1056907,
+      "avgVolume20": 1241142,
+      "avgDollarVolume20": 333432745,
+      "liquid": true,
+      "catalyst": false,
+      "catalystHeadline": null,
+      "breakout": false,
+      "volumeSpike2x": false,
+      "signal": "Hold",
+      "dataSource": "Alpha Vantage"
+    },
+    {
+      "company": "Carl Zeiss Meditec AG",
+      "ticker": "AFX",
+      "symbol": "AFX.DEX",
+      "column": "medical",
+      "currentPrice": 25.56,
+      "change": -0.16000000000000014,
+      "high": 26.16,
+      "low": 25.56,
+      "open": 25.76,
+      "volume": 182637,
+      "avgVolume20": 188934,
+      "avgDollarVolume20": 4829165,
+      "liquid": false,
+      "catalyst": false,
+      "catalystHeadline": null,
+      "breakout": false,
+      "volumeSpike2x": false,
+      "signal": "Sell",
+      "dataSource": "Alpha Vantage"
+    },
+    {
+      "company": "KUKA AG",
+      "ticker": "KU2",
+      "symbol": "KU2.DEX",
+      "column": "robotics",
+      "currentPrice": 84.0,
+      "change": 0.0,
+      "high": 84.0,
+      "low": 84.0,
+      "open": 84.0,
+      "volume": 0,
+      "avgVolume20": 3573,
+      "avgDollarVolume20": 300098,
+      "liquid": false,
+      "catalyst": false,
+      "catalystHeadline": null,
+      "breakout": false,
+      "volumeSpike2x": false,
+      "signal": "Sell",
+      "dataSource": "Alpha Vantage"
+    },
+    {
+      "company": "Volkswagen AG VZ",
+      "ticker": "VOW3",
+      "symbol": "VOW3.DEX",
+      "column": "transport_land",
+      "currentPrice": 88.0,
+      "change": 0.37999999999999545,
+      "high": 88.88,
+      "low": 86.98,
+      "open": 87.2,
+      "volume": 733651,
+      "avgVolume20": 843528,
+      "avgDollarVolume20": 74230486,
+      "liquid": true,
+      "catalyst": false,
+      "catalystHeadline": null,
+      "breakout": false,
+      "volumeSpike2x": false,
+      "signal": "Hold",
+      "dataSource": "Alpha Vantage"
+    },
+    {
+      "company": "OHB SE",
+      "ticker": "OHB",
+      "symbol": "OHB.DEX",
+      "column": "transport_space",
+      "currentPrice": 318.0,
+      "change": 16.5,
+      "high": 318.0,
+      "low": 292.5,
+      "open": 303.5,
+      "volume": 10102,
+      "avgVolume20": 7078,
+      "avgDollarVolume20": 2250852,
+      "liquid": false,
+      "catalyst": false,
+      "catalystHeadline": null,
+      "breakout": true,
+      "volumeSpike2x": false,
+      "signal": "Sell",
+      "dataSource": "Alpha Vantage"
+    }
+  ],
+  "errors": [
+    {
+      "symbol": "VOLCAR.SI",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "ORA.EPA",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "SCMN.SI",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "TEF.MCE",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "DSY.EPA",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "VOW3.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "SHL.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "SRT.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "STMN.SI",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "SOON.SI",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "AMBU.CPH",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "BNTX.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "QIA.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "EVO.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "ABJ.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "KGX.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "FEST.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "RSW.LON",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "OCDO.LON",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "AIR.EPA",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "DTG.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "CON.DEX",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "FR.EPA",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "RR.LON",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "FCT.MI",
+      "error": "No time series data"
+    },
+    {
+      "symbol": "MYR.DEX",
+      "error": "No time series data"
+    }
+  ]
 }
