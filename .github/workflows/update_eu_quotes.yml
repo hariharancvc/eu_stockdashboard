@@ -1,0 +1,35 @@
+name: Update EU stock quotes
+
+on:
+  schedule:
+    - cron: "0 7,12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-quotes-eu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run EU quote update script
+        env:
+          ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+        run: python scripts/update_eu_quotes.py
+
+      - name: Commit updated eu_quotes.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/eu_quotes.json
+          git diff --staged --quiet || git commit -m "Update eu_quotes.json"
+          git push
