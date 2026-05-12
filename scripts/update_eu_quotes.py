@@ -3,6 +3,7 @@ import os
 import time
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError, URLError
+from pathlib import Path
 
 API_KEY = os.environ["ALPHA_VANTAGE_API_KEY"]
 
