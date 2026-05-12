@@ -10,8 +10,8 @@ API_KEY = os.environ["ALPHA_VANTAGE_API_KEY"]
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent
 DATA_DIR = ROOT_DIR / "data"
-SYMBOLS_FILE = DATA_DIR / 'symbols.json'
-QUOTES_FILE = DATA_DIR / 'quotes.json'
+SYMBOLS_FILE = DATA_DIR / 'eu_symbol.json'
+QUOTES_FILE = DATA_DIR / 'eu_quotes.json'
 os.makedirs(DATA_DIR, exist_ok=True)
 
 with open(SYMBOLS_FILE, "r", encoding="utf-8") as f:
