@@ -9,8 +9,8 @@ API_KEY = os.environ["ALPHA_VANTAGE_API_KEY"]
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 DATA_DIR = os.path.join(ROOT_DIR, "data")
-SYMBOLS_FILE = os.path.join(DATA_DIR, "eu_symbol.json")
-QUOTES_FILE = os.path.join(DATA_DIR, "eu_quotes.json")
+SYMBOLS_FILE = DATA_DIR / 'symbols.json'
+QUOTES_FILE = DATA_DIR / 'quotes.json'
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
