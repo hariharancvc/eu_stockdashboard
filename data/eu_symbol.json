@@ -1,6 +1,6 @@
 {
   "updatedAt": null,
-  "source": "alpha_vantage",
+  "source": "twelvedata",
   "items": [
     {"company":"Siemens AG","ticker":"SIE","symbol":"SIE.DEX","column":"nvidia"},
     {"company":"Volvo Cars AB","ticker":"VOLCAR","symbol":"VOLCAR.SI","column":"nvidia"},

@@ -1,6 +1,6 @@
 {
   "updatedAt": 1778656159,
-  "source": "alpha_vantage",
+  "source": "twelvedata",
   "settings": {
     "liquidityThreshold": 10000000,
     "breakoutWindow": 20,
@@ -27,7 +27,7 @@
       "breakout": false,
       "volumeSpike2x": false,
       "signal": "Hold",
-      "dataSource": "Alpha Vantage"
+      "dataSource": "Twelve Data"
     }
   ],
   "errors": [
