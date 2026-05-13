@@ -23,8 +23,8 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          python -m pip install yfinance      
+          python -m pip install --upgrade pip
+          pip install yfinance      
 
       - name: Run EU quote update script
         env:
