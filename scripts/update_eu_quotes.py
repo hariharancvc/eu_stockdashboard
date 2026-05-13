@@ -7,7 +7,7 @@ import yfinance as yf
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent
 DATA_DIR = ROOT_DIR / "data"
-SYMBOLS_FILE = DATA_DIR / "eu_symbols.json"
+SYMBOLS_FILE = DATA_DIR / "eu_symbol.json"
 QUOTES_FILE = DATA_DIR / "eu_quotes.json"
 
 LIQUIDITY_THRESHOLD = 10_000_000
