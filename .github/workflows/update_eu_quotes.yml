@@ -22,11 +22,11 @@ jobs:
           python-version: "3.12"
       
       - name: Install dependencies
-        run: pip install yfinance      
+        run:  pip install yfinance      
 
       - name: Run EU quote update script
         env:
-          ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+          ALPHA_VANTAGE_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
         run: python scripts/update_eu_quotes.py
 
       - name: Commit updated eu_quotes.json
