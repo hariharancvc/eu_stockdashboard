@@ -28,7 +28,7 @@ jobs:
 
       - name: Run EU quote update script
         env:
-          ALPHA_VANTAGE_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
         run: python scripts/update_eu_quotes.py
 
       - name: Commit updated eu_quotes.json
