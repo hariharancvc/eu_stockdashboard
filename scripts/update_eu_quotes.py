@@ -1,83 +1,26 @@
 import json
-import os
 import time
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-API_KEY = os.getenv('TWELVEDATA_API_KEY')
-# API_KEY = os.environ["TWELVEDATA_API_KEY"]
+
+import yfinance as yf
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent
 DATA_DIR = ROOT_DIR / "data"
-SYMBOLS_FILE = DATA_DIR / "eu_symbol.json"
+SYMBOLS_FILE = DATA_DIR / "eu_symbols.json"
 QUOTES_FILE = DATA_DIR / "eu_quotes.json"
 
 LIQUIDITY_THRESHOLD = 10_000_000
 BREAKOUT_PCT = 0.02
 BREAKOUT_WINDOW = 20
-NEWS_LOOKBACK_DAYS = 7
 VOLUME_SPIKE_MULTIPLIER = 2.0
-API_PAUSE_SECONDS = 0.8
+API_PAUSE_SECONDS = 0.4
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 with open(SYMBOLS_FILE, "r", encoding="utf-8") as f:
     raw_symbols = json.load(f)
     symbols = raw_symbols["items"] if isinstance(raw_symbols, dict) and "items" in raw_symbols else raw_symbols
-
-
-def fetch_json(base_url, params):
-    query = dict(params)
-    query["apikey"] = API_KEY
-    url = f"{base_url}?{urlencode(query)}"
-    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urlopen(req, timeout=25) as response:
-        return json.loads(response.read().decode("utf-8"))
-
-
-def fetch_quote(symbol):
-    data = fetch_json("https://api.twelvedata.com/quote", {"symbol": symbol})
-    if isinstance(data, dict) and data.get("status") == "error":
-        raise RuntimeError(data.get("message", "Quote error"))
-    return data
-
-
-def fetch_time_series(symbol, outputsize=30):
-    data = fetch_json(
-        "https://api.twelvedata.com/time_series",
-        {
-            "symbol": symbol,
-            "interval": "1day",
-            "outputsize": outputsize,
-            "order": "DESC",
-            "format": "JSON",
-        },
-    )
-    if isinstance(data, dict) and data.get("status") == "error":
-        raise RuntimeError(data.get("message", "Time series error"))
-    return data
-
-
-def fetch_news(symbol, outputsize=10):
-    try:
-        data = fetch_json(
-            "https://api.twelvedata.com/news",
-            {
-                "symbol": symbol,
-                "outputsize": outputsize,
-            },
-        )
-        if isinstance(data, dict) and data.get("status") == "error":
-            return []
-        if isinstance(data, list):
-            return data
-        if isinstance(data, dict) and "data" in data and isinstance(data["data"], list):
-            return data["data"]
-        return []
-    except Exception:
-        return []
 
 
 def to_float(value):
@@ -116,76 +59,55 @@ def compute_signal(liquid, catalyst, breakout, volume_spike_2x):
     return "Sell"
 
 
-def extract_candles_metrics(ts_data):
-    values = ts_data.get("values", []) if isinstance(ts_data, dict) else []
-    if not values:
-        return {}
-
-    latest = values[0]
-    recent = values[:BREAKOUT_WINDOW]
-    prior = values[1:BREAKOUT_WINDOW + 1]
-
-    latest_close = to_float(latest.get("close"))
-    latest_high = to_float(latest.get("high"))
-    latest_low = to_float(latest.get("low"))
-    latest_open = to_float(latest.get("open"))
-    latest_volume = to_float(latest.get("volume"))
-
-    recent_volumes = [to_float(v.get("volume")) for v in recent]
-    prior_closes = [to_float(v.get("close")) for v in prior]
-
-    avg_volume_20 = numeric_avg(recent_volumes[1:] if len(recent_volumes) > 1 else recent_volumes)
-    avg_dollar_volume_20 = avg_volume_20 * latest_close if avg_volume_20 and latest_close else None
-    prior_high = max([c for c in prior_closes if c is not None], default=latest_close)
-    prev_close = to_float(values[1].get("close")) if len(values) > 1 else None
-
-    return {
-        "latest_close": latest_close,
-        "latest_high": latest_high,
-        "latest_low": latest_low,
-        "latest_open": latest_open,
-        "latest_volume": latest_volume,
-        "avg_volume_20": avg_volume_20,
-        "avg_dollar_volume_20": avg_dollar_volume_20,
-        "prior_high": prior_high,
-        "prev_close": prev_close,
-        "latest_datetime": latest.get("datetime"),
-    }
+def get_news_items(ticker_obj):
+    try:
+        news = ticker_obj.news
+        return news if isinstance(news, list) else []
+    except Exception:
+        return []
 
 
 results = []
 errors = []
 
 for item in symbols:
-    symbol = item.get("symbol") or item.get("ticker") or item.get("finnhubSymbol")
+    symbol = item.get("symbol") or item.get("ticker") or item.get("yahooSymbol")
     if not symbol:
         errors.append({"symbol": None, "error": f"Missing symbol for item {item}"})
         continue
 
     try:
-        quote = fetch_quote(symbol)
-        time.sleep(API_PAUSE_SECONDS)
+        ticker = yf.Ticker(symbol)
+        hist = ticker.history(period="2mo", interval="1d", auto_adjust=False)
 
-        ts_data = fetch_time_series(symbol, outputsize=30)
-        time.sleep(API_PAUSE_SECONDS)
-
-        news_items = fetch_news(symbol, outputsize=10)
-        time.sleep(API_PAUSE_SECONDS)
-
-        candle_metrics = extract_candles_metrics(ts_data)
-        if not candle_metrics:
-            errors.append({"symbol": symbol, "error": "No time series data"})
+        if hist is None or hist.empty:
+            errors.append({"symbol": symbol, "error": "No price history returned"})
             continue
 
-        current_price = to_float(quote.get("close")) or candle_metrics["latest_close"]
-        prev_close = to_float(quote.get("previous_close")) or candle_metrics["prev_close"]
-        change = current_price - prev_close if current_price is not None and prev_close is not None else None
-        percent_change = (change / prev_close * 100) if change is not None and prev_close not in (None, 0) else None
+        hist = hist.tail(BREAKOUT_WINDOW + 2).copy()
+        latest = hist.iloc[-1]
+        prior = hist.iloc[:-1]
+        recent_for_avg = prior.tail(BREAKOUT_WINDOW)
 
-        liquid = is_liquid(candle_metrics["avg_dollar_volume_20"])
+        latest_close = to_float(latest.get("Close"))
+        latest_high = to_float(latest.get("High"))
+        latest_low = to_float(latest.get("Low"))
+        latest_open = to_float(latest.get("Open"))
+        latest_volume = to_float(latest.get("Volume"))
+
+        prev_close = to_float(prior.iloc[-1].get("Close")) if not prior.empty else None
+        recent_volumes = [to_float(v) for v in recent_for_avg["Volume"].tolist()] if "Volume" in recent_for_avg else []
+        recent_closes = [to_float(v) for v in recent_for_avg["Close"].tolist()] if "Close" in recent_for_avg else []
+
+        avg_volume_20 = numeric_avg(recent_volumes)
+        avg_dollar_volume_20 = avg_volume_20 * latest_close if avg_volume_20 and latest_close else None
+        prior_high = max([c for c in recent_closes if c is not None], default=latest_close)
+
+        news_items = get_news_items(ticker)
+        liquid = is_liquid(avg_dollar_volume_20)
         catalyst = has_catalyst(news_items)
-        breakout = is_breakout(current_price, candle_metrics["prior_high"])
-        volume_spike_2x = has_volume_spike(candle_metrics["latest_volume"], candle_metrics["avg_volume_20"])
+        breakout = is_breakout(latest_close, prior_high)
+        volume_spike_2x = has_volume_spike(latest_volume, avg_volume_20)
         signal = compute_signal(liquid, catalyst, breakout, volume_spike_2x)
 
         headline = None
@@ -193,47 +115,53 @@ for item in symbols:
             first = news_items[0]
             headline = first.get("title") or first.get("headline")
 
+        quote_timestamp = None
+        try:
+            quote_timestamp = str(hist.index[-1])
+        except Exception:
+            quote_timestamp = None
+
+        change = latest_close - prev_close if latest_close is not None and prev_close is not None else None
+        percent_change = (change / prev_close * 100) if change is not None and prev_close not in (None, 0) else None
+
         results.append({
             "company": item.get("company"),
             "ticker": item.get("ticker", symbol),
             "symbol": symbol,
             "column": item.get("column"),
-            "currentPrice": current_price,
+            "currentPrice": latest_close,
             "change": round(change, 4) if change is not None else None,
             "percentChange": round(percent_change, 4) if percent_change is not None else None,
-            "high": candle_metrics["latest_high"],
-            "low": candle_metrics["latest_low"],
-            "open": candle_metrics["latest_open"],
+            "high": latest_high,
+            "low": latest_low,
+            "open": latest_open,
             "prevClose": prev_close,
-            "volume": round(candle_metrics["latest_volume"]) if candle_metrics["latest_volume"] is not None else None,
-            "avgVolume20": round(candle_metrics["avg_volume_20"]) if candle_metrics["avg_volume_20"] is not None else None,
-            "avgDollarVolume20": round(candle_metrics["avg_dollar_volume_20"]) if candle_metrics["avg_dollar_volume_20"] is not None else None,
+            "volume": round(latest_volume) if latest_volume is not None else None,
+            "avgVolume20": round(avg_volume_20) if avg_volume_20 is not None else None,
+            "avgDollarVolume20": round(avg_dollar_volume_20) if avg_dollar_volume_20 is not None else None,
             "liquid": liquid,
             "catalyst": catalyst,
             "catalystHeadline": headline[:100] if headline else None,
             "breakout": breakout,
-            "breakoutLevel": candle_metrics["prior_high"],
+            "breakoutLevel": prior_high,
             "volumeSpike2x": volume_spike_2x,
-            "quoteTimestamp": quote.get("datetime") or candle_metrics["latest_datetime"],
+            "quoteTimestamp": quote_timestamp,
             "signal": signal,
-            "dataSource": "Twelve Data",
+            "dataSource": "Yahoo Finance / yfinance"
         })
 
-    except HTTPError as e:
-        errors.append({"symbol": symbol, "error": f"HTTP {e.code}"})
-    except URLError as e:
-        errors.append({"symbol": symbol, "error": f"Network: {e.reason}"})
+        time.sleep(API_PAUSE_SECONDS)
+
     except Exception as e:
         errors.append({"symbol": symbol, "error": str(e)})
 
 payload = {
     "updatedAt": int(time.time()),
-    "source": "twelve_data",
+    "source": "yahoo_finance",
     "settings": {
         "liquidityThreshold": LIQUIDITY_THRESHOLD,
         "breakoutWindow": BREAKOUT_WINDOW,
         "breakoutPct": BREAKOUT_PCT,
-        "newsLookbackDays": NEWS_LOOKBACK_DAYS,
         "volumeSpikeMultiplier": VOLUME_SPIKE_MULTIPLIER,
     },
     "items": results,
