@@ -1,155 +1,138 @@
 {
-  "updatedAt": 1778656159,
-  "source": "twelvedata",
+  "updatedAt": 1778665823,
+  "source": "twelve_data",
   "settings": {
     "liquidityThreshold": 10000000,
     "breakoutWindow": 20,
+    "breakoutPct": 0.02,
     "newsLookbackDays": 7,
     "volumeSpikeMultiplier": 2.0
   },
-  "items": [
-    {
-      "company": "Siemens AG",
-      "ticker": "SIE",
-      "symbol": "SIE.DEX",
-      "column": "nvidia",
-      "currentPrice": 264.6,
-      "change": -4.0499999999999545,
-      "high": 267.65,
-      "low": 263.2,
-      "open": 266.25,
-      "volume": 1207694,
-      "avgVolume20": 1220229,
-      "avgDollarVolume20": 322872593,
-      "liquid": true,
-      "catalyst": false,
-      "catalystHeadline": null,
-      "breakout": false,
-      "volumeSpike2x": false,
-      "signal": "Hold",
-      "dataSource": "Twelve Data"
-    }
-  ],
+  "items": [],
   "errors": [
     {
+      "symbol": "SIE.DEX",
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
+    },
+    {
       "symbol": "VOLCAR.SI",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "ORA.EPA",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "SCMN.SI",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "TEF.MCE",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "DSY.EPA",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "VOW3.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "SHL.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "SRT.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "AFX.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "STMN.SI",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "SOON.SI",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "AMBU.CPH",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "BNTX.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "QIA.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "EVO.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "ABJ.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "KU2.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "KGX.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "FEST.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "RSW.LON",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "OCDO.LON",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "AIR.EPA",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "VOW3.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "DTG.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "CON.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "FR.EPA",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "RR.LON",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "FCT.MI",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "OHB.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     },
     {
       "symbol": "MYR.DEX",
-      "error": "No time series data"
+      "error": "**apikey** parameter is incorrect or not specified. You can get your free API key instantly following this link: https://twelvedata.com/pricing. If you believe that everything is correct, you can contact us at https://twelvedata.com/contact/customer"
     }
   ]
 }
