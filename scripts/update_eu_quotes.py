@@ -5,8 +5,8 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-
-API_KEY = os.environ["TWELVEDATA_API_KEY"]
+API_KEY = os.getenv('TWELVEDATA_API_KEY')
+# API_KEY = os.environ["TWELVEDATA_API_KEY"]
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 ROOT_DIR = SCRIPT_DIR.parent
