@@ -22,7 +22,9 @@ jobs:
           python-version: "3.12"
       
       - name: Install dependencies
-        run:  pip install yfinance      
+        run: |
+          pip install --upgrade pip
+          pip install yfinance      
 
       - name: Run EU quote update script
         env:
