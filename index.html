@@ -1,73 +1,417 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EU Stocklist</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.5}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:200px;background:#161b22;border-right:1px solid #30363d;padding:16px;overflow-y:auto}
-.sidebar h2{font-size:14px;color:#f0f6fc;margin-bottom:12px}
-.sidebar a{display:block;padding:6px 0;color:#8b949e;text-decoration:none;font-size:12px}
-.sidebar a:hover{color:#58a6ff}
-.main{margin-left:200px;padding:24px;min-height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid #30363d}
-header h1{font-size:18px;color:#f0f6fc}
-.refresh-btn{background:#238636;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer}
-.refresh-btn:hover{background:#2ea043}
-.refresh-btn:disabled{background:#30363d;cursor:not-allowed}
-details{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;margin-bottom:16px}
-details>summary{cursor:pointer;font-size:13px;color:#f0f6fc;display:flex;align-items:center;gap:8px}
-details[open]{border-color:#58a6ff}
-.card{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:12px;margin-top:8px;font-size:12px}
-.card-row{display:flex;justify-content:space-between;margin:3px 0}
-.card-label{color:#8b949e}
-.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px}
-.buy{background:#1a4f2e;color:#56d364;border:1px solid #56d364}
-.hold{background:#1a3a1a;color:#e3b341;border:1px solid #e3b341}
-.sell{background:#4f1a1a;color:#ff7b72;border:1px solid #ff7b72}
-.up{color:#3fb950}.down{color:#f85149}
-.mobile-nav{display:none;position:sticky;top:0;background:#161b22;border-bottom:1px solid #30363d;padding:8px;z-index:10}
-.mobile-nav button{background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;padding:6px 10px;font-size:11px;margin:2px}
-.loader{text-align:center;padding:40px;color:#8b949e}
-@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.mobile-nav{display:flex;flex-wrap:wrap;gap:4px}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EU stocklist</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #edeae5;
+      --color-border: #d4d1ca; --color-divider: #dcd9d5; --color-text: #28251d; --color-text-muted: #6d6b66;
+      --color-text-faint: #a7a49d; --color-text-inverse: #f9f8f4; --color-primary: #01696f; --color-primary-hover: #0c4e54;
+      --color-success: #437a22; --color-warning: #964219; --color-blue: #006494; --color-purple: #7a39bb;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 24px rgba(22,22,22,.08);
+      --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      --font-body: 'Satoshi', Inter, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #22211f;
+      --color-border: #393836; --color-divider: #262523; --color-text: #cdccca; --color-text-muted: #92908b;
+      --color-text-faint: #686662; --color-text-inverse: #171614; --color-primary: #4f98a3; --color-primary-hover: #227f8b;
+      --color-success: #6daa45; --color-warning: #bb653b; --color-blue: #5591c7; --color-purple: #a86fdf;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.2); --shadow-md: 0 10px 24px rgba(0,0,0,.28);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body {
+      min-height: 100dvh; font-family: var(--font-body); font-size: var(--text-base); line-height: 1.5;
+      color: var(--color-text); background: var(--color-bg); -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+    .dashboard {
+      display: grid; grid-template-columns: 280px 1fr; grid-template-rows: auto 1fr; height: 100dvh;
+    }
+    .sidebar {
+      grid-row: 1 / -1; background: var(--color-surface); border-right: 1px solid var(--color-border);
+      padding: var(--space-5); overflow-y: auto; overscroll-behavior: contain;
+    }
+    .brand { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-8); }
+    .logo {
+      width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+      color: var(--color-primary);
+    }
+    .brand h1 { font-size: var(--text-lg); line-height: 1.1; margin: 0; }
+    .brand p, .meta, .hint, .small { font-size: var(--text-xs); color: var(--color-text-muted); }
+    .nav-section { margin-bottom: var(--space-6); }
+    .nav-title { text-transform: uppercase; letter-spacing: .08em; color: var(--color-text-faint); font-size: var(--text-xs); margin-bottom: var(--space-3); }
+    .nav-list { display: grid; gap: var(--space-2); }
+    .nav-link {
+      display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); text-decoration: none; padding: .8rem .9rem;
+      border-radius: var(--radius-md); background: transparent; border: 1px solid transparent;
+    }
+    .nav-link:hover, .nav-link.active { background: var(--color-surface-2); border-color: var(--color-border); }
+    .badge { font-size: var(--text-xs); padding: .2rem .55rem; border-radius: var(--radius-full); background: color-mix(in srgb, var(--color-primary) 18%, transparent); color: var(--color-primary); }
+    .header {
+      grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+      padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+      backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 5;
+    }
+    .title-wrap h2 { margin: 0; font-size: var(--text-xl); line-height: 1.05; }
+    .title-wrap p { margin: .25rem 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .header-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+    .control, .search {
+      border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); border-radius: var(--radius-md);
+      min-height: 44px; padding: 0 .9rem; transition: background var(--transition-interactive), border-color var(--transition-interactive);
+    }
+    .search { min-width: 240px; }
+    .control:hover { background: var(--color-surface-2); }
+    .theme-toggle, .menu-toggle { width: 44px; display: grid; place-items: center; padding: 0; }
+    .main { grid-column: 2; overflow-y: auto; overscroll-behavior: contain; padding: var(--space-5); }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
+    .card {
+      background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+    }
+    .kpi-card { padding: var(--space-4); }
+    .kpi-card h3 { margin: 0 0 .35rem; font-size: var(--text-sm); color: var(--color-text-muted); }
+    .kpi-value { font-size: var(--text-xl); font-weight: 700; font-variant-numeric: tabular-nums lining-nums; }
+    .layout-grid { display: grid; grid-template-columns: repeat(4, minmax(320px, 1fr)); gap: var(--space-4); align-items: start; }
+    .column { min-width: 0; }
+    .column-head { padding: var(--space-4); border-bottom: 1px solid var(--color-divider); display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+    .column-head h3 { margin: 0; font-size: var(--text-lg); }
+    .column-head p { margin: .4rem 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .company-list { padding: var(--space-3); display: grid; gap: var(--space-3); }
+    .company-item {
+      padding: var(--space-4); border-radius: var(--radius-md); background: var(--color-surface-2);
+      border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+    }
+    .row { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+    .ticker { font-weight: 700; font-size: var(--text-sm); letter-spacing: .04em; }
+    .company-name { margin: .2rem 0 .45rem; font-size: var(--text-base); }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0 .7rem; }
+    .tag { font-size: var(--text-xs); padding: .18rem .5rem; border-radius: var(--radius-full); background: var(--color-surface-offset); color: var(--color-text-muted); }
+    .tag.primary { background: color-mix(in srgb, var(--color-primary) 16%, transparent); color: var(--color-primary); }
+    .tag.blue { background: color-mix(in srgb, var(--color-blue) 16%, transparent); color: var(--color-blue); }
+    .tag.purple { background: color-mix(in srgb, var(--color-purple) 16%, transparent); color: var(--color-purple); }
+    .tag.success { background: color-mix(in srgb, var(--color-success) 16%, transparent); color: var(--color-success); }
+    .tag.warning { background: color-mix(in srgb, var(--color-warning) 16%, transparent); color: var(--color-warning); }
+    .tag.sell { background: color-mix(in srgb, #a13544 16%, transparent); color: #a13544; }
+    .checks { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .45rem .7rem; margin-top: .8rem; }
+    .check { font-size: var(--text-xs); color: var(--color-text-muted); display: flex; align-items: center; gap: .45rem; }
+    .dot { width: .65rem; height: .65rem; border-radius: 50%; background: var(--color-text-faint); flex: 0 0 auto; }
+    .dot.yes { background: var(--color-success); }
+    .dot.no { background: #a13544; }
+    .dot.pending { background: var(--color-warning); }
+    .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .55rem .8rem; font-size: var(--text-xs); color: var(--color-text-muted); }
+    .field-grid strong { display: block; color: var(--color-text); font-size: var(--text-xs); font-weight: 500; }
+    .price { font-weight: 700; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+    .placeholder { color: var(--color-warning); }
+    .footer-note { margin-top: var(--space-5); padding: var(--space-4); }
+    .mobile-tabs { display: none; gap: var(--space-2); overflow-x: auto; padding-bottom: var(--space-2); margin-bottom: var(--space-4); }
+    .mobile-tabs button { white-space: nowrap; }
+    .api-box { padding: var(--space-4); margin-top: var(--space-4); }
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--text-xs); background: var(--color-surface-offset); padding: .25rem .45rem; border-radius: .4rem; }
+    @media (max-width: 1100px) {
+      .dashboard { grid-template-columns: 76px 1fr; }
+      .sidebar .copy, .sidebar .meta, .sidebar .nav-title, .sidebar .badge, .sidebar .hint { display: none; }
+      .brand { justify-content: center; }
+      .nav-link { justify-content: center; padding: .8rem; }
+      .nav-link span:last-child { display: none; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 860px) {
+      html, body { overflow: auto; }
+      .dashboard { display: block; height: auto; }
+      .sidebar { display: none; position: fixed; inset: 0 auto 0 0; width: min(84vw, 300px); z-index: 20; box-shadow: var(--shadow-md); }
+      .sidebar.open { display: block; }
+      .header, .main { position: static; }
+      .main { padding-top: var(--space-4); }
+      .search { min-width: 0; flex: 1 1 180px; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .layout-grid { grid-template-columns: 1fr; }
+      .mobile-tabs { display: flex; position: sticky; top: 0; z-index: 4; background: var(--color-bg); }
+      .column { scroll-margin-top: 72px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
 </head>
 <body>
-<div class="mobile-nav">
-<button onclick="jumpTo('nvidia')">NVIDIA</button>
-<button onclick="jumpTo('medical')">Medical</button>
-<button onclick="jumpTo('robotics')">Robotics</button>
-<button onclick="jumpTo('transport_air')">Air</button>
-<button onclick="jumpTo('transport_land')">Land</button>
-<button onclick="jumpTo('transport_water')">Water</button>
-<button onclick="jumpTo('transport_space')">Space</button>
-</div>
-<div class="sidebar">
-<h2>EU Stocklist</h2>
-<a href="#nvidia">NVIDIA Ecosystem</a>
-<a href="#medical">Medical AI</a>
-<a href="#robotics">Robotics AI</a>
-<a href="#transport_air">Transport - Air</a>
-<a href="#transport_land">Transport - Land</a>
-<a href="#transport_water">Transport - Water</a>
-<a href="#transport_space">Transport - Space</a>
-</div>
-<div class="main">
-<header><h1>EU Stocklist</h1><button class="refresh-btn" id="refreshBtn">Reload latest JSON</button></header>
-<div id="lastUpdated" style="font-size:11px;color:#8b949e;margin-bottom:16px"></div>
-<div id="loader" class="loader">Loading quotes...</div>
-<div id="content"></div>
-</div>
-<script>
-const COL_ORDER=['nvidia','medical','robotics','transport_air','transport_land','transport_water','transport_space'];
-const COL_NAME={'nvidia':'NVIDIA Ecosystem','medical':'Medical AI','robotics':'Robotics AI','transport_air':'Transport - Air','transport_land':'Transport - Land','transport_water':'Transport - Water','transport_space':'Transport - Space'};
-function s(n){const b=new Blob([n||""],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="eu_symbol.json";a.click()}
-function dl(f){fetch("./data/eu_quotes.json?_="+Date.now()).then(r=>r.json()).then(d=>render(d)).catch(e=>{document.getElementById("loader").innerHTML="<p style='color:#f85149'>Failed to load data. Make sure eu_quotes.json exists after first GitHub Action run.</p>"});}
-function render(d){const last=d.updatedAt?new Date(d.updatedAt*1000).toLocaleString():"Unknown";const src=d.source||d.sourceName||"Unknown";document.getElementById("lastUpdated").textContent="Last updated: "+last+" | Source: "+src;document.getElementById("loader").style.display="none";const colData={};COL_ORDER.forEach(c=>{colData[c]=[]});(d.items||[]).forEach(it=>{const col=it.column;if(!colData[col])colData[col]=[];colData[col].push(it)});COL_ORDER.forEach(col=>{const items=colData[col]||[];if(!items.length)return;const sec=document.createElement("div");sec.id=col;sec.innerHTML="<h3 style='margin:24px 0 12px;font-size:15px;color:#58a6ff'>"+COL_NAME[col]+"</h3>";items.forEach(it=>{const sClass=(it.signal||"Hold").toLowerCase();const pct=it.change!==undefined?(it.change>=0?"up":"down"):"";const pctText=it.change!==undefined?((it.change>=0?"+":"")+it.change.toFixed(2)):"-";sec.innerHTML+=('<details><summary><span style="font-weight:bold">'+it.company+'</span> <span style="color:#8b949e">('+it.ticker+' '+it.symbol+')</span> <span class="badge '+sClass+'">'+it.signal+'</span></summary><div class="card"><div class="card-row"><span class="card-label">Price</span><span class="'+pct+'"><strong>'+(it.currentPrice!==null?(it.currentPrice.toFixed(2)):"—")+'</strong></span></div><div class="card-row"><span class="card-label">Change</span><span class="'+pct+'">'+pctText+'</span></div><div class="card-row"><span class="card-label">Signal</span><span class="badge '+sClass+'">'+(it.signal||"—")+'</span></div><div class="card-row"><span class="card-label">Liquidity</span><span>'+(it.liquid!==undefined?(it.liquid?"Yes":"No"):"—")+'</span></div><div class="card-row"><span class="card-label">Catalyst</span><span>'+(it.catalyst!==undefined?(it.catalyst?"Yes":"No"):"—")+'</span></div><div class="card-row"><span class="card-label">Breakout</span><span>'+(it.breakout!==undefined?(it.breakout?"Yes":"No"):"—")+'</span></div><div class="card-row"><span class="card-label">2x Volume</span><span>'+(it.volumeSpike2x!==undefined?(it.volumeSpike2x?"Yes":"No"):"—")+'</span></div>'+((it.catalystHeadline)?('<div class="card-row" style="grid-template-columns:auto 1fr"><span class="card-label">News</span><span style="color:#8b949e;font-size:11px">'+it.catalystHeadline+'</span></div>'):"")+'</div></details>');});document.getElementById("content").appendChild(sec);});}
-function jumpTo(id){document.getElementById(id).scrollIntoView({behavior:"smooth"});}
-document.getElementById("refreshBtn").onclick=dl;dl();
-</script>
+  <div class="dashboard">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-label="AI Stock Dashboard logo">
+            <path d="M4 18 12 4l8 14"/>
+            <path d="M8 14h8"/>
+          </svg>
+        </div>
+        <div class="copy">
+          <h1>EU stocklist</h1>
+          <p>EU stock dashboard</p>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">Columns</div>
+        <div class="nav-list">
+          <a class="nav-link active" href="#nvidia"><span>01</span><span>NVIDIA ecosystem</span></a>
+          <a class="nav-link" href="#medical"><span>02</span><span>Medical AI</span></a>
+          <a class="nav-link" href="#robotics"><span>03</span><span>Robotics AI</span></a>
+          <a class="nav-link" href="#transport"><span>04</span><span>Transportation AI</span></a>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">Status</div>
+        <p class="meta">Placeholder dataset loaded. Finnhub-ready fields included for symbol, quote, previous close, change, and timestamp.</p>
+      </div>
+    </aside>
+
+    <header class="header">
+      <div class="title-wrap">
+        <h2>EU stocklist</h2>
+      </div>
+      <div class="header-actions">
+        <button class="control menu-toggle" id="menuToggle" aria-label="Open navigation">☰</button>
+        <input class="search" id="searchInput" type="search" placeholder="Filter company or ticker" aria-label="Filter companies" />
+        <button class="control" id="refreshJson">Reload latest JSON</button>
+        <button class="control theme-toggle" id="themeToggle" aria-label="Switch theme">◐</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="kpi-grid" aria-label="Summary metrics">
+        <article class="card kpi-card"><h3>Total tracked</h3><div class="kpi-value" id="kpiTotal">0</div></article>
+        <article class="card kpi-card"><h3>Columns</h3><div class="kpi-value">4</div></article>
+        <article class="card kpi-card"><h3>Live quote fields</h3><div class="kpi-value">Finnhub</div></article>
+        <article class="card kpi-card"><h3>Last refresh</h3><div class="kpi-value" id="kpiUpdated">Stub</div></article>
+      </section>
+
+      <div class="mobile-tabs" aria-label="Jump to section">
+        <button class="control" data-jump="#nvidia">NVIDIA</button>
+        <button class="control" data-jump="#medical">Medical</button>
+        <button class="control" data-jump="#robotics">Robotics</button>
+        <button class="control" data-jump="#transport">Transport</button>
+      </div>
+
+      <section class="layout-grid" id="columns"></section>
+
+      <section class="card footer-note">
+        <p><strong>Notes.</strong> This version loads quote data from <span class="code">./data/eu_quotes.json</span> on page load and when you press <span class="code">Reload latest JSON</span>. The scheduled GitHub Action should keep that JSON file fresh. The signal is now based on watchlist fields for liquidity, catalyst, breakout, and 2x volume spike, but the breakout and volume values remain placeholders until you wire live data and rules.</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      apiKey: '',
+      lastUpdated: 'Placeholder data',
+      columns: [
+        {
+          id: 'software',
+          title: 'Software',
+          description: 'European software and digital platform stocks.',
+          items: [
+            { company: 'SAP SE', ticker: 'SAP.DE', market: 'XETRA', theme: 'Enterprise software', relation: 'EU software watchlist', priceLimit: 'EU list', finnhubSymbol: 'SAP.DE' },
+            { company: 'Dassault Systemes SE', ticker: 'DSY.PA', market: 'Euronext Paris', theme: 'Industrial software', relation: 'EU software watchlist', priceLimit: 'EU list', finnhubSymbol: 'DSY.PA' }
+          ]
+        },
+        {
+          id: 'industrial',
+          title: 'Industrial',
+          description: 'European industrial automation and infrastructure stocks.',
+          items: [
+            { company: 'Siemens AG', ticker: 'SIE.DE', market: 'XETRA', theme: 'Industrial automation', relation: 'EU industrial watchlist', priceLimit: 'EU list', finnhubSymbol: 'SIE.DE' },
+            { company: 'Schneider Electric SE', ticker: 'SU.PA', market: 'Euronext Paris', theme: 'Energy management', relation: 'EU industrial watchlist', priceLimit: 'EU list', finnhubSymbol: 'SU.PA' },
+            { company: 'ABB Ltd', ticker: 'ABBN.SW', market: 'SIX Swiss Exchange', theme: 'Automation and robotics', relation: 'EU industrial watchlist', priceLimit: 'EU list', finnhubSymbol: 'ABBN.SW' }
+          ]
+        },
+        {
+          id: 'auto_semis',
+          title: 'Auto & semis',
+          description: 'European auto makers and semiconductor names.',
+          items: [
+            { company: 'Mercedes-Benz Group AG', ticker: 'MBG.DE', market: 'XETRA', theme: 'Auto', relation: 'EU auto watchlist', priceLimit: 'EU list', finnhubSymbol: 'MBG.DE' },
+            { company: 'Volkswagen AG Pref', ticker: 'VOW3.DE', market: 'XETRA', theme: 'Auto', relation: 'EU auto watchlist', priceLimit: 'EU list', finnhubSymbol: 'VOW3.DE' },
+            { company: 'BMW AG', ticker: 'BMW.DE', market: 'XETRA', theme: 'Auto', relation: 'EU auto watchlist', priceLimit: 'EU list', finnhubSymbol: 'BMW.DE' },
+            { company: 'Infineon Technologies AG', ticker: 'IFX.DE', market: 'XETRA', theme: 'Semiconductor', relation: 'EU semiconductor watchlist', priceLimit: 'EU list', finnhubSymbol: 'IFX.DE' },
+            { company: 'ASML Holding N.V.', ticker: 'ASML.AS', market: 'Euronext Amsterdam', theme: 'Semiconductor', relation: 'EU semiconductor watchlist', priceLimit: 'EU list', finnhubSymbol: 'ASML.AS' },
+            { company: 'BE Semiconductor Industries N.V.', ticker: 'BESI.AS', market: 'Euronext Amsterdam', theme: 'Semiconductor', relation: 'EU semiconductor watchlist', priceLimit: 'EU list', finnhubSymbol: 'BESI.AS' },
+            { company: 'STMicroelectronics N.V.', ticker: 'STMPA.PA', market: 'Euronext Paris', theme: 'Semiconductor', relation: 'EU semiconductor watchlist', priceLimit: 'EU list', finnhubSymbol: 'STMPA.PA' }
+          ]
+        },
+        {
+          id: 'aerospace_defense_exchange',
+          title: 'Aero, defense & exchange',
+          description: 'European aerospace, defense, telecom, exchange and diversified names.',
+          items: [
+            { company: 'Airbus SE', ticker: 'AIR.PA', market: 'Euronext Paris', theme: 'Aerospace', relation: 'EU aerospace watchlist', priceLimit: 'EU list', finnhubSymbol: 'AIR.PA' },
+            { company: 'Safran SA', ticker: 'SAF.PA', market: 'Euronext Paris', theme: 'Aerospace', relation: 'EU aerospace watchlist', priceLimit: 'EU list', finnhubSymbol: 'SAF.PA' },
+            { company: 'Rolls-Royce Holdings plc', ticker: 'RR.L', market: 'LSE', theme: 'Aerospace', relation: 'EU aerospace watchlist', priceLimit: 'EU list', finnhubSymbol: 'RR.L' },
+            { company: 'Rheinmetall AG', ticker: 'RHM.DE', market: 'XETRA', theme: 'Defense', relation: 'EU defense watchlist', priceLimit: 'EU list', finnhubSymbol: 'RHM.DE' },
+            { company: 'BAE Systems plc', ticker: 'BA.L', market: 'LSE', theme: 'Defense', relation: 'EU defense watchlist', priceLimit: 'EU list', finnhubSymbol: 'BA.L' },
+            { company: 'Deutsche Telekom AG', ticker: 'DTE.DE', market: 'XETRA', theme: 'Telecom', relation: 'EU telecom watchlist', priceLimit: 'EU list', finnhubSymbol: 'DTE.DE' },
+            { company: 'Allianz SE', ticker: 'ALV.DE', market: 'XETRA', theme: 'Insurance', relation: 'EU financial watchlist', priceLimit: 'EU list', finnhubSymbol: 'ALV.DE' },
+            { company: 'Deutsche Boerse AG', ticker: 'DB1.DE', market: 'XETRA', theme: 'Exchange', relation: 'EU exchange watchlist', priceLimit: 'EU list', finnhubSymbol: 'DB1.DE' },
+            { company: 'Euronext N.V.', ticker: 'ENX.PA', market: 'Euronext Paris', theme: 'Exchange', relation: 'EU exchange watchlist', priceLimit: 'EU list', finnhubSymbol: 'ENX.PA' },
+            { company: 'RELX PLC', ticker: 'REL.L', market: 'LSE', theme: 'Information', relation: 'EU information watchlist', priceLimit: 'EU list', finnhubSymbol: 'REL.L' },
+            { company: 'BASF SE', ticker: 'BAS.DE', market: 'XETRA', theme: 'Chemicals', relation: 'EU chemicals watchlist', priceLimit: 'EU list', finnhubSymbol: 'BAS.DE' },
+            { company: 'Bayer AG', ticker: 'BAYN.DE', market: 'XETRA', theme: 'Healthcare', relation: 'EU healthcare watchlist', priceLimit: 'EU list', finnhubSymbol: 'BAYN.DE' }
+          ]
+        }
+      ]
+    };
+
+    const columnsEl = document.getElementById('columns');
+    const searchInput = document.getElementById('searchInput');
+    const kpiTotal = document.getElementById('kpiTotal');
+    const kpiUpdated = document.getElementById('kpiUpdated');
+    const sidebar = document.getElementById('sidebar');
+
+    function priceMarkup(item) {
+      if (typeof item.livePrice === 'number') {
+        return `<div class="price">${item.livePrice.toFixed(2)}</div>`;
+      }
+      return `<div class="price placeholder">Pending</div>`;
+    }
+
+
+    function indicatorClass(indicator) {
+      if (indicator === 'Buy') return 'success';
+      if (indicator === 'Sell') return 'sell';
+      return 'warning';
+    }
+
+    function renderColumns(filter = '') {
+      const q = filter.trim().toLowerCase();
+      let count = 0;
+      columnsEl.innerHTML = state.columns.map(col => {
+        const items = col.items.filter(item => {
+          const hay = `${item.company} ${item.ticker} ${item.theme} ${item.segment || ''}`.toLowerCase();
+          return !q || hay.includes(q);
+        });
+        count += items.length;
+        return `
+          <article class="card column" id="${col.id}">
+            <div class="column-head">
+              <div>
+                <h3>${col.title}</h3>
+                <p>${col.description}</p>
+              </div>
+              <span class="badge">${items.length}</span>
+            </div>
+            <div class="company-list">
+              ${items.map(item => `
+                <section class="company-item">
+                  <div class="row">
+                    <div>
+                      <div class="ticker">${item.ticker}</div>
+                      <div class="company-name">${item.company}</div>
+                    </div>
+                    ${priceMarkup(item)}
+                  </div>
+                  <div class="tags">
+                    <span class="tag primary">${item.theme}</span>
+                    <span class="tag">${item.market}</span>
+                    ${item.segment ? `<span class="tag blue">${item.segment}</span>` : ''}
+                    <span class="tag purple">${item.priceLimit}</span>
+                    ${item.signal ? `<span class=\"tag ${indicatorClass(item.signal)}\">${item.signal}</span>` : `<span class=\"tag\">Signal pending</span>`}
+                  </div>
+                  <div class="field-grid">
+                    <div><strong>Relation</strong>${item.relation}</div>
+                    <div><strong>Prev close</strong>${item.prevClose ?? '—'}</div>
+                    <div><strong>Change</strong>${item.change ?? '—'}</div>
+                    <div><strong>Quote time</strong>${item.quoteTimestamp ?? 'Not loaded'}</div>
+                    <div><strong>Catalyst note</strong>${item.catalystHeadline ?? 'Not loaded'}</div>
+                  </div>
+                  <div class="checks">
+                    <div class="check"><span class="dot ${item.liquid === true ? 'yes' : item.liquid === false ? 'no' : 'pending'}"></span>Liquid</div>
+                    <div class="check"><span class="dot ${item.catalyst === true ? 'yes' : item.catalyst === false ? 'no' : 'pending'}"></span>Catalyst</div>
+                    <div class="check"><span class="dot ${item.breakout === true ? 'yes' : item.breakout === false ? 'no' : 'pending'}"></span>Breakout</div>
+                    <div class="check"><span class="dot ${item.volumeSpike2x === true ? 'yes' : item.volumeSpike2x === false ? 'no' : 'pending'}"></span>2x volume spike</div>
+                  </div>
+                </section>
+              `).join('') || `<section class="company-item"><div class="small">No matches in this column.</div></section>`}
+            </div>
+          </article>
+        `;
+      }).join('');
+      kpiTotal.textContent = count;
+      kpiUpdated.textContent = state.lastUpdated;
+    }
+
+    async function loadQuotesFromJson() {
+      try {
+        const res = await fetch(`./data/eu_quotes.json?_=${Date.now()}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const quoteData = await res.json();
+        const bySymbol = {};
+        (quoteData.items || []).forEach(item => {
+          bySymbol[item.finnhubSymbol] = item;
+        });
+
+        state.columns.forEach(col => col.items.forEach(item => {
+          const q = bySymbol[item.finnhubSymbol];
+          if (!q) {
+            item.livePrice = null;
+            item.prevClose = null;
+            item.change = null;
+            item.quoteTimestamp = null;
+            item.liquid = null;
+            item.catalyst = null;
+            item.breakout = null;
+            item.volumeSpike2x = null;
+            item.signal = null;
+            item.catalystHeadline = null;
+            return;
+          }
+          item.livePrice = typeof q.currentPrice === 'number' ? q.currentPrice : null;
+          item.prevClose = typeof q.prevClose === 'number' ? q.prevClose : null;
+          item.change = typeof q.percentChange === 'number' ? `${q.percentChange.toFixed(2)}%` : (typeof q.change === 'number' ? q.change.toFixed(2) : null);
+          item.quoteTimestamp = q.timestamp ? new Date(q.timestamp * 1000).toLocaleString() : null;
+          item.liquid = typeof q.liquid === 'boolean' ? q.liquid : null;
+          item.catalyst = typeof q.catalyst === 'boolean' ? q.catalyst : null;
+          item.breakout = typeof q.breakout === 'boolean' ? q.breakout : null;
+          item.volumeSpike2x = typeof q.volumeSpike2x === 'boolean' ? q.volumeSpike2x : null;
+          item.signal = q.signal || null;
+          item.catalystHeadline = q.catalystHeadline || null;
+        }));
+
+        state.lastUpdated = quoteData.updatedAt ? new Date(quoteData.updatedAt * 1000).toLocaleString() : 'JSON loaded';
+      } catch (err) {
+        state.lastUpdated = 'JSON load failed';
+      }
+      renderColumns(searchInput.value);
+    }
+
+    renderColumns();
+    loadQuotesFromJson();
+
+    searchInput.addEventListener('input', e => renderColumns(e.target.value));
+    document.getElementById('refreshJson').addEventListener('click', loadQuotesFromJson);
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const root = document.documentElement;
+      root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+    document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.toggle('open'));
+    document.querySelectorAll('[data-jump]').forEach(btn => btn.addEventListener('click', () => {
+      const target = document.querySelector(btn.dataset.jump);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+    document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => sidebar.classList.remove('open')));
+    window.loadQuotesFromJson = loadQuotesFromJson;
+  </script>
 </body>
 </html>
