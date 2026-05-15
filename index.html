@@ -359,11 +359,11 @@
         const quoteData = await res.json();
         const bySymbol = {};
         (quoteData.items || []).forEach(item => {
-          bySymbol[item.finnhubSymbol] = item;
+          bySymbol[item.ticker] = item;
         });
 
         state.columns.forEach(col => col.items.forEach(item => {
-          const q = bySymbol[item.finnhubSymbol];
+          const q = bySymbol[item.ticker];
           if (!q) {
             item.livePrice = null;
             item.prevClose = null;
@@ -380,7 +380,7 @@
           item.livePrice = typeof q.currentPrice === 'number' ? q.currentPrice : null;
           item.prevClose = typeof q.prevClose === 'number' ? q.prevClose : null;
           item.change = typeof q.percentChange === 'number' ? `${q.percentChange.toFixed(2)}%` : (typeof q.change === 'number' ? q.change.toFixed(2) : null);
-          item.quoteTimestamp = q.timestamp ? new Date(q.timestamp * 1000).toLocaleString() : null;
+          item.quoteTimestamp = q.quoteTimestamp ? new Date(q.quoteTimestamp).toLocaleString() : null;
           item.liquid = typeof q.liquid === 'boolean' ? q.liquid : null;
           item.catalyst = typeof q.catalyst === 'boolean' ? q.catalyst : null;
           item.breakout = typeof q.breakout === 'boolean' ? q.breakout : null;
