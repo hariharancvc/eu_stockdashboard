@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1790429514,
+  "updatedAt": 1790443925,
   "source": "yahoo_finance",
   "settings": {
     "liquidityThreshold": 10000000,
@@ -474,7 +474,7 @@
       "avgVolume20": 481977,
       "avgDollarVolume20": 162088943,
       "liquid": true,
-      "catalyst": true,
+      "catalyst": false,
       "catalystHeadline": null,
       "breakout": false,
       "breakoutLevel": 344.20001220703125,
